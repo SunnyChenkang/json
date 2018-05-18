@@ -46,6 +46,16 @@ public:
     CJsonBase( void ) { }
     virtual ~CJsonBase( void ) { }
 
+    typedef std::map< std::string , CJsonBase* > JSON_STRING_KEY_TABLE;
+    typedef std::map< uint32      , CJsonBase* > JSON_INT_KEY_TABLE;
+
+    // load json;
+    void LoadJson( std::string json );
+
+    // get string key table;
+    template< typename T >
+    T* GetCell( std::string name );
+
 protected:
 
     // writer template;
@@ -98,6 +108,10 @@ public:
     // to json;
     std::string ToJson( void );
     static void FromJson( CJsonBase* , const std::string& );
+
+protected:
+    JSON_STRING_KEY_TABLE m_string_key_tables;
+    JSON_INT_KEY_TABLE    m_number_key_tables;
 };
 
 
@@ -112,27 +126,11 @@ public:
     std::list< T > m_Array;
 
 public:
-    virtual void ToWriterJson( Writer<StringBuffer> & writer )
-    {
-        writer.StartArray();
-        for each ( T en in m_Array )
-        {
-            ToWriterValue( writer , en );
-        }
-        writer.EndArray();
-    }
-
-    virtual void ToParseJson( const Value& value )
-    {
-        for ( size_t idx = 0; idx < value.Size(); idx++ )
-        {
-            const Value& val = value[ idx ];
-            T t;
-            ToParseValue( val , t );
-            m_Array.push_back( t );
-        }
-    }
+    virtual void ToWriterJson( Writer<StringBuffer> & writer );
+    virtual void ToParseJson( const Value& value );
 };
+
+#include "json_template.inl"
 
 SS_NAMESPACE_END_DECL
 

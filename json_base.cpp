@@ -67,3 +67,17 @@ void SS::CJsonBase::FromJson( CJsonBase* pJson , const std::string& json )
         pJson->ToParseJson( JsonValues );
     }
 }
+
+void SS::CJsonBase::LoadJson( std::string json )
+{
+    std::string path = NLMISC::CPath::lookup( json );
+    std::ifstream is;
+    is.open( path );
+    string content = "";
+    string temp = "";
+    while ( getline( is , temp ) )
+    {
+        content=content+temp+'\n';
+    }
+    FromJson( this , content );
+}
